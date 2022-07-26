@@ -33,6 +33,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function favorites(){
+        return $this->hasMany(Favorite::class);
+    }
    
     
 }

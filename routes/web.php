@@ -21,7 +21,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
+Route::group(['middleware' => ['auth']], function() {
 Route::controller(UserController::class)->prefix('admin/users')->name('admin.users.')->group(function() {
     // Route::resource('/');
     Route::get('/','index')->name('index');
@@ -29,7 +29,6 @@ Route::controller(UserController::class)->prefix('admin/users')->name('admin.use
 });
 
 Route::controller(MovieController::class)->prefix('admin/movies')->name('admin.movies.')->group(function() {
-    // Route::resource('/');
     Route::get('/','index')->name('index');
     Route::get('/create','create')->name('create');
     Route::post('/store','store')->name('store');
@@ -38,8 +37,8 @@ Route::controller(MovieController::class)->prefix('admin/movies')->name('admin.m
 });
 
 Route::controller(FavoriteController::class)->prefix('admin/favorites')->name('admin.favorites.')->group(function() {
-    // Route::resource('/');
     Route::get('/','index')->name('index');
+});
 });
 
 Auth::routes();
