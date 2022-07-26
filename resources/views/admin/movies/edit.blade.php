@@ -29,7 +29,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Movie Details</h3>
                         </div>
-                        <form method="POST" action="{{route('admin.movies.update',$movie->id)}}">
+                        <form method="POST" action="{{route('admin.movies.update',$movie->id)}}" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
                             <input type="hidden" name="_method" value="PUT">
@@ -51,19 +51,31 @@
                                     </p>
                                     @endif
                                 </div>
-                               
+                                <div class="form-group">
+                                <label for="gender">Publish</label>
+                                <div>
+                                    <select class="form-control" aria-label="Default select example" name="is_published">
+                                        <option value="1" {{$movie->is_published == '1' ?'selected':''}}>Publish</option>
+                                        <option value="0" {{$movie->is_published == '0' ?'selected':''}}>Unpublish</option>
+                                        
+                                    </select>
+                                    @if ($errors->has('is_published'))
+                                    <p style="color: gold">
+                                        {{ $errors->first('is_published') }}
+                                    </p>
+                                    @endif
+                                </div>
+                                </div>
                             
                                 <div class="form-group">
-                                    <label for="exampleInputFile">Profile Image</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="exampleInputFile">
-                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                        </div>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">Upload</span>
-                                        </div>
-                                    </div>
+                                    <label class="form-label" for="poster">Poster:</label>
+
+                                    <input type="file" name="poster" id="poster" class="form-control @error('poster') is-invalid @enderror">
+                                    @if ($errors->has('poster'))
+                                    <p style="color: red">
+                                        {{ $errors->first('poster') }}
+                                    </p>
+                                    @endif
                                 </div>
                                
                             </div>

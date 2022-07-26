@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('user.index');
+// });
 
 Route::group(['middleware' => ['auth']], function() {
 Route::controller(UserController::class)->prefix('admin/users')->name('admin.users.')->group(function() {
@@ -41,6 +41,12 @@ Route::controller(FavoriteController::class)->prefix('admin/favorites')->name('a
 });
 });
 
+Route::get('admin/{any}', function () {
+    return redirect()->route('movie');
+})->where('any', '.*');
+
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\User\MovieController::class, 'index'])->name('movie');
+Route::get('/favorite', [App\Http\Controllers\User\MovieController::class, 'favorite'])->name('favorite');
+Route::get('/my-favorites', [App\Http\Controllers\User\MovieController::class, 'allFavorites'])->name('allFavorites');

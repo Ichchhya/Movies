@@ -34,58 +34,65 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="title"> Title</label>
-                                    <input type="text" class="form-control"  name="title" id="title" placeholder="Enter Movie title">
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter Movie title">
                                     @if ($errors->has('title'))
-                                        <p style="color: red">
-                                            {{ $errors->first('title') }}
-                                        </p>
+                                    <p style="color: red">
+                                        {{ $errors->first('title') }}
+                                    </p>
                                     @endif
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Description</label>
                                     <input type="text" class="form-control" name="description" id="description" placeholder="Enter Description">
                                     @if ($errors->has('description'))
-                                        <p style="color: red">
-                                            {{ $errors->first('description') }}
-                                        </p>
-                                        @endif
+                                    <p style="color: red">
+                                        {{ $errors->first('description') }}
+                                    </p>
+                                    @endif
                                 </div>
                                 <div class="form-group">
                                     <label for="release_date"> Release Date</label>
-                                    <input type="date" name="release_date" class="form-control" id="release_date"
-                                        autocomplete="off" placeholder="Release Date" value="{{ old('release_date')}}">
+                                    <input type="date" name="release_date" class="form-control" id="release_date" autocomplete="off" placeholder="Release Date" value="{{ old('release_date')}}">
                                     @if ($errors->has('release_date'))
                                     <p style="color: gold">
                                         {{ $errors->first('release_date') }}
                                     </p>
                                     @endif
                                 </div>
-                                
-                                
                                 <div class="form-group">
-                                    <label for="exampleInputFile">Profile Image</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="exampleInputFile" name="profile_image">
-                                            <label class="custom-file-label" for="profile_image">Choose file</label>
-                                            @if ($errors->has('profile_image'))
-                                        <p style="color: red">
-                                            {{ $errors->first('profile_image') }}
+                                    <label for="gender">Publish</label>
+                                    <div>
+                                        <select class="form-control" aria-label="Default select example" name="is_published">
+                                            <option value="1" {{old('is_published') == '1' ?'selected':''}}>Publish</option>
+                                            <option value="0" {{old('is_published') == '0' ?'selected':''}}>Unpublish</option>
+
+                                        </select>
+                                        @if ($errors->has('is_published'))
+                                        <p style="color: gold">
+                                            {{ $errors->first('is_published') }}
                                         </p>
                                         @endif
-                                        </div>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">Upload</span>
-                                        </div>
                                     </div>
                                 </div>
-                               
+
+                                <div class="form-group">
+                                    <label class="form-label" for="poster">Poster:</label>
+
+                                    <input type="file" name="poster" id="poster" class="form-control @error('poster') is-invalid @enderror">
+                                    @if ($errors->has('poster'))
+                                    <p style="color: red">
+                                        {{ $errors->first('poster') }}
+                                    </p>
+                                    @endif
+                                </div>
+
+
+
                             </div>
 
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Submit</button>
-                                <a href="{{ route('admin.movies.index') }}"
-                                class="btn btn-danger">Cancel</a>
+                                <a href="{{ route('admin.movies.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </form>
                     </div>
