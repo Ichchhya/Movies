@@ -1,105 +1,47 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
+use App\Models\Favorite;
 use App\Models\Movie;
-use App\Http\Requests\StoreMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class MovieController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $movies = Movie::all();
-        return view ('admin.movies.index',compact('movies'));
+
+        $movies = Movie::where('is_published',1)->latest()->get();
+        return view ('user.index',compact('movies'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view ('admin.movies.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreMovieRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreMovieRequest $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'release_date' => 'nullable',
+    public function favorite(Request $request){
+        $favorite = Favorite::create([
+            'user_id' => auth()->id(),
+            'movie_id' => $request->movie_id,
         ]);
+        $movie_name = Movie::find($request->movie_id)->title;
 
-        Movie::create([
-            $request->all()
-        ]);
-        return redirect()->route('admin.movies.index')->with('success','Movie Created Successfully');
+        $details = [
+
+            'title' => 'Movie Favorited',
+    
+            'body' => 'Your have favorited movie titled '. $movie_name
+    
+        ];
+    
+       $user_email = User::where('id',$favorite->user_id)->first()->email;
+        Mail::to($user_email)->send(new \App\Mail\FavoriteMail($details));
+        $movies = Movie::latest()->get();
+        return redirect()->route('movie',compact('movies'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Movie  $movie
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Movie $movie)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Movie  $movie
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Movie $movie)
-    {
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateMovieRequest  $request
-     * @param  \App\Models\Movie  $movie
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateMovieRequest $request, Movie $movie)
-    {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'release_date' => 'nullable',
-        ]);
-
-        $attributes = $request->all();
-
-        $movie->update($attributes);
-
-        return redirect()->route('admin.movies.index')->with('message','Movie updated successfully!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Movie  $movie
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Movie $movie)
-    {
-        //
+    public function allFavorites(){
+        $favorites = Favorite::where('user_id',auth()->id())->get();
+        return view('user.favorite',compact('favorites'));
     }
 }

@@ -15,7 +15,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $movies = Movie::all();
+        $movies = Movie::latest()->get();
         return view ('admin.movies.index',compact('movies'));
     }
 
@@ -42,10 +42,20 @@ class MovieController extends Controller
             'description' => 'required',
             'release_date' => 'nullable',
         ]);
-        Movie::create([
+
+        $image = $request->poster;
+        if($request->hasFile('poster')){
+            $path = storage_path().'/app/public/posters';
+            $ext = $image->getClientOriginalExtension();
+            $image_name = time().uniqid().auth()->id().'.'.'webp';
+            $image->move($path , $image_name);
+        }
+        $movie = Movie::create([
             'title' => $request->title,
             'description' => $request->description,
             'release_date' => $request->release_date,
+            'is_published' => $request->is_published,
+            'poster' => $image_name,
         ]);
         return redirect()->route('admin.movies.index')->with('success','Movie Created Successfully');
     }
@@ -87,8 +97,21 @@ class MovieController extends Controller
             'description' => 'required',
             'release_date' => 'nullable',
         ]);
-
         $attributes = $request->all();
+
+        if($request->hasFile('poster')){
+            $image = $request->poster;
+            $request->validate([
+                // 'poster' => 'mimes: jpg, jpeg, png, gif, webp | max:10000'
+            ]);
+            $path = storage_path().'/app/public/posters';
+            $ext = $image->getClientOriginalExtension();
+            $image_name = time().uniqid().auth()->id().'.'.'webp';
+            $image->move($path , $image_name);
+            $attributes['poster']=$image_name;
+
+        }
+
         $movie = Movie::find($id);
         $movie->update($attributes);
 
